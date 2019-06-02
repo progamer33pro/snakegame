@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ㄚﾉ乚凡几 ロㄚ凵几凵</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="user-scalable= no, width=device-width, initial-scale=0.88">
+  <title></title>
+  <style>
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
+
+  body {
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-y: hidden;
+  }
+  canvas {
+    border: 2px dotted black;
+  }
+  </style>
+</head>
+<body>
+<canvas width="400"" height="400" id="oyun"></canvas>
+<script>
+var canvas = document.getElementById('oyun');
+var context = canvas.getContext('2d');
+
+var grid = 16;
+var yilan = {
+  x: 160,
+  y: 160,
+  dx: grid,
+  dy: 0,
+  hucres: [],
+  maxhucres: 4
+};
+var count = 0;
+var yem = {
+  x: 320,
+  y: 320
+};
+
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+function loop() {
+  requestAnimationFrame(loop);
+
+
+  if (++count < 4) {
+    return;
+  }
+
+  count = 0;
+  context.clearRect(0,0,canvas.width,canvas.height);
+
+  yilan.x += yilan.dx;
+  yilan.y += yilan.dy;
+
+  if (yilan.x < 0) {
+    yilan.x = canvas.width - grid;
+  }
+  else if (yilan.x >= canvas.width) {
+    yilan.x = 0;
+  }
+
+  if (yilan.y < 0) {
+    yilan.y = canvas.height - grid;
+  }
+  else if (yilan.y >= canvas.height) {
+    yilan.y = 0;
+  }
+
+  yilan.hucres.unshift({x: yilan.x, y: yilan.y});
+
+  
+  if (yilan.hucres.length > yilan.maxhucres) {
+    yilan.hucres.pop();
+  } 
+    var baslik= ["SKORUN", yilan.maxhucres -4]
+    if(yilan.maxhucres >4)
+    {
+    document.title = baslik;
+    }
+    this.context.fillStyle = 'black';
+    this.context.font = '20px Arial';
+    this.context.fillText(yilan.maxhucres -4,  80, 30);
+    
+    
+     this.context.fillStyle = 'black';
+     this.context.font = '20px Arial';
+     this.context.fillText("SKOR:", 20, 30);
+
+    
+    //Asagidakini degistirme !!!!!!
+    
+    
+    //this.context.fillStyle = 'teal';
+    //this.context.font = '8px Arial';
+    //this.context.fillText("İsim", 20, 50);
+
+
+  // yem çiz
+  context.fillStyle = 'pink';
+  context.fillRect(yem.x, yem.y, grid-1, grid-1);
+
+  //  yilan ciz
+  context.fillStyle = 'tomato';
+  yilan.hucres.forEach(function(hucre, index) {
+    context.fillRect(hucre.x, hucre.y, grid-1, grid-1);
+
+    // yilan yemi yerse
+    if (hucre.x === yem.x && hucre.y === yem.y) {
+      yilan.maxhucres++;
+
+      yem.x = getRandomInt(0, 25) * grid;
+      yem.y = getRandomInt(0, 25) * grid;
+    }
+
+    for (var i = index + 1; i < yilan.hucres.length; i++) {
+      
+      // Yaninca
+      if (hucre.x === yilan.hucres[i].x && hucre.y === yilan.hucres[i].y) {
+      if (yilan.maxhucres < 11){
+      	var yorum= "           Nasıl ölmeyi başardın?"
+      }
+      else if(yilan.maxhucres < 15){
+      	var yorum= "           Kol bozuk abi:D"
+      }
+      else if(yilan.maxhucres<34){
+      	var yorum= "           Az kalsın oluyordu daha çok çalışmalısın."
+      }
+      else {
+      	var yorum= "           !!!Tek kelime ile SÜPERSİN!!!"
+      }
+      var uyari = new Array("Kuyruğuna bastın ve öldün   SKORUN:", yilan.maxhucres-4, yorum);
+      // document.getElementById("MESAJ").innerHTML = "oldun";
+         //alert("KUYRUĞUNA BASTIN VE ÖLDÜN")
+         alert(uyari);
+         //document.write("<br> SKORUN:")
+         //document.write(yilan.maxhucres -4)
+        //  delay (5000);
+          yilan.x = 160;
+          yilan.y = 160;
+          yilan.hucres = [];
+          yilan.maxhucres = 4;
+          yilan.dx = grid;
+          yilan.dy = 0;
+
+          yem.x = getRandomInt(0, 25) * grid;
+          yem.y = getRandomInt(0, 25) * grid;
+      }
+    }
+  });
+}
+
+var allowedTime = 200;
+var startX = 0;
+var startY = 0;
+
+document.addEventListener('touchstart', function(e){
+    var touch = e.changedTouches[0]
+    startX = touch.pageX
+    startY = touch.pageY
+    startTime = new Date().getTime()
+    
+}, false)
+
+document.addEventListener('touchmove', function(e){
+   
+}, false)
+
+document.addEventListener('touchend', function(e){
+    var touch = e.changedTouches[0]
+    distX = touch.pageX - startX
+    distY = touch.pageY - startY
+
+    if (Math.abs(distX) > Math.abs(distY)) {
+      if (distX > 0 && yilan.dx === 0) {
+        yilan.dx = grid;
+        yilan.dy = 0;
+      }
+      else if (distX < 0 && yilan.dx === 0) {
+        yilan.dx = -grid;
+        yilan.dy = 0;
+      }
+    } else {
+      if (distY > 0 && yilan.dy === 0) {
+        yilan.dy = grid;
+        yilan.dx = 0;
+      }
+      else if (distY < 0 && yilan.dy === 0) {
+        yilan.dy = -grid;
+        yilan.dx = 0;
+      }
+    }
+  
+
+}, false)
+
+document.addEventListener('keydown', function(e) {
+  
+  if (e.which === 37 && yilan.dx === 0) {
+    yilan.dx = -grid;
+    yilan.dy = 0;
+  }
+  else if (e.which === 38 && yilan.dy === 0) {
+    yilan.dy = -grid;
+    yilan.dx = 0;
+  }
+  else if (e.which === 39 && yilan.dx === 0) {
+    yilan.dx = grid;
+    yilan.dy = 0;
+  }
+  else if (e.which === 40 && yilan.dy === 0) {
+    yilan.dy = grid;
+    yilan.dx = 0;
+  }
+});
+
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
